@@ -23,6 +23,6 @@ LOCAL_SRC_FILES := cv_core.cpp \
 
 LOCAL_C_INCLUDE := $(LOCAL_PATH)
 
-LOCAL_LDLIBS +=  -lm -llog
+LOCAL_LDLIBS +=  -lm -llog -ljnigraphics
 
 include $(BUILD_SHARED_LIBRARY)

@@ -17,11 +17,19 @@ int register_android_jni_core_module(JNIEnv* env, jclass clazz);
 
 /*
  * Class:     com_panda_org_angrypandacv_core_OpenCVHelper
- * Method:    gray
+ * Method:    Gray
  * Signature: ([III)[I
  */
-JNIEXPORT jintArray JNICALL Java_cn_edu_zafu_opencv_OpenCVHelper_gray
+JNIEXPORT jintArray JNICALL Java_com_panda_org_angrypandacv_core_OpenCVHelper_Gray
         (JNIEnv *, jobject, jintArray, jint, jint);
+
+/*
+ * Class:     com_panda_org_angrypandacv_core_OpenCVHelper
+ * Method:    SobelImage
+ * Signature: (Landroid/graphics/Bitmap;)I
+ */
+JNIEXPORT jint JNICALL Java_com_panda_org_angrypandacv_core_OpenCVHelper_SobelImage
+        (JNIEnv *, jobject, jobject);
 
 #ifdef __cplusplus
 }

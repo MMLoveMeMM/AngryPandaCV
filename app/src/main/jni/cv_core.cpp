@@ -1,14 +1,15 @@
 #include "cv_core.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <android/bitmap.h>
 #include <opencv2/opencv.hpp>
 using namespace cv;
 /*
  * Class:     com_panda_org_angrypandacv_core_OpenCVHelper
- * Method:    gray
+ * Method:    Gray
  * Signature: ([III)[I
  */
-JNIEXPORT jintArray JNICALL Java_cn_edu_zafu_opencv_OpenCVHelper_gray
+JNIEXPORT jintArray JNICALL Java_com_panda_org_angrypandacv_core_OpenCVHelper_Gray
         (JNIEnv *env, jobject thiz, jintArray buf, jint w, jint h){
 
     jint *cbuf;
@@ -37,9 +38,39 @@ JNIEXPORT jintArray JNICALL Java_cn_edu_zafu_opencv_OpenCVHelper_gray
 
 }
 
+/*
+ * Class:     com_panda_org_angrypandacv_core_OpenCVHelper
+ * Method:    SobelImage
+ * Signature: (Landroid/graphics/Bitmap;)I
+ */
+JNIEXPORT jint JNICALL Java_com_panda_org_angrypandacv_core_OpenCVHelper_SobelImage
+        (JNIEnv *env, jobject thiz, jobject bmpIn){
+    AndroidBitmapInfo inBmpInfo;
+    void* inPixelsAddress;
+    int ret;
+    if ((ret = AndroidBitmap_getInfo(env, bmpIn, &inBmpInfo)) < 0) {
+        LOGI("AndroidBitmap_getInfo() failed ! error=%d", ret);
+        return -1;
+    }
+    LOGI("original image :: width is %d; height is %d; stride is %d; format is %d;flags is   %d,stride is %u", inBmpInfo.width, inBmpInfo.height, inBmpInfo.stride, inBmpInfo.format, inBmpInfo.flags, inBmpInfo.stride);
+    if ((ret = AndroidBitmap_lockPixels(env, bmpIn, &inPixelsAddress)) < 0) {
+        LOGE("AndroidBitmap_lockPixels() failed ! error=%d", ret);
+        return -1;
+    }
+
+    Mat inMat(inBmpInfo.height, inBmpInfo.width,
+              CV_8UC4, inPixelsAddress);
+    Sobel(inMat, inMat, inMat.depth(), 1, 1);
+    AndroidBitmap_unlockPixels(env, bmpIn);
+    LOGI("Return !! ");
+    return 0;
+}
+
+
 static JNINativeMethod CoreMethods[] =
 {
-    {"gray", "([III)[I",(void *)Java_cn_edu_zafu_opencv_OpenCVHelper_gray}
+    {"SobelImage", "(Landroid/graphics/Bitmap;)I",(void *)Java_com_panda_org_angrypandacv_core_OpenCVHelper_SobelImage},
+    {"Gray", "([III)[I",(void *)Java_com_panda_org_angrypandacv_core_OpenCVHelper_Gray}
 };
 
 int register_android_jni_core_module(JNIEnv* env, jclass clazz){
